@@ -1,20 +1,22 @@
 const CronJob = require("cron").CronJob;
-const { spawn } = require("child_process");
+const { exec} = require("child_process");
+const fs = require('fs');
 
 const job = new CronJob(
-  "*/10 * * * * *",
+  "*/15 * * * * *",
   () => {
-    const ls = spawn("ncu", ["--packageFile package.json"]);
-    ls.stdout.on("data", (data) => {
-      console.log(`stdout: ${data}`);
-    });
-
-    ls.stderr.on("data", (data) => {
-      console.error(`stderr: ${data}`);
-    });
-
-    ls.on("close", (code) => {
-      console.log(`child process exited with code ${code}`);
+    const ls = exec("ncu --packageFile package.json", (err, stdout, stderr) =>{
+      if(err){
+        const error = new Error(err.message);
+        error.status = 404;
+        throw error;
+      }
+      if(stderr){
+        console.log(`stderr: ${stderr}`);
+      }
+      console.log(`stdout: ${stdout}`);
+      const redirectOutput = fs.WriteStream('./log.txt');
+      process.stdout.write = process.stderr.write = redirectOutput.write.bind(redirectOutput);
     });
   },
   null,
