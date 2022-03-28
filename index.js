@@ -2,12 +2,12 @@ const CronJob = require("cron").CronJob;
 const { exec } = require("child_process");
 const fs = require("fs");
 const sgMail = require("@sendgrid/mail");
-require('dotenv').config();
+require("dotenv").config();
 
 job = new CronJob(
   "*/60 * * * * *",
   () => {
-    exec("npm outdated", (err, stdout, stderr) => {
+    exec("npm-check", (err, stdout, stderr) => {
       if (err) {
         console.error(err.message);
       }
@@ -29,15 +29,18 @@ job = new CronJob(
         Attachment: redirectOutput,
       };
 
-      sgMail.send(msg).then((response) => {
-        console.log(response[0].statusCode);
-        console.log(response[0].headers);
-      }).catch((err) => {
-        if (!err.status) {
-          err.status = 500;
-        }
-        next(err);
-      });
+      sgMail
+        .send(msg)
+        .then((response) => {
+          console.log(response[0].statusCode);
+          console.log(response[0].headers);
+        })
+        .catch((err) => {
+          if (!err.status) {
+            err.status = 500;
+          }
+          next(err);
+        });
     });
   },
   null,
