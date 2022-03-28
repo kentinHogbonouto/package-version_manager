@@ -29,11 +29,15 @@ job = new CronJob(
         Attachment: redirectOutput,
       };
 
-      sgMail.send(msg);
-      return (response) => {
+      sgMail.send(msg).then((response) => {
         console.log(response[0].statusCode);
         console.log(response[0].headers);
-      };
+      }).catch((err) => {
+        if (!err.status) {
+          err.status = 500;
+        }
+        next(err);
+      });
     });
   },
   null,
