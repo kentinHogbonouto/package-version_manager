@@ -25,6 +25,7 @@ job = new CronJob(
         from: "kentinhogbonouto1@gmail.com", // Change to your verified sender
         subject: "node packages updated repport",
         html: "<strong>Dear admin, kindly open the attachment \nfile bellow to check whole the packages out to date whitin your api. you will receive this mail every 72 hours</strong>",
+        Attachment: redirectOutput
       };
 
        sgMail.send(msg);
