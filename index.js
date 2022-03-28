@@ -26,7 +26,7 @@ const Job = new CronJob(
     async function main() {
       try {
         const resultat = await execAsync("npm-check");
-        const redirectStdOut = fs.WriteStream(updateFileDirectory);
+        const redirectStdOut = fs.WriteStream('./update-package.txt');
         process.stdout.write = process.stderr.write = redirectStdOut.write.bind(redirectStdOut);
       } catch (err) {
         console.log(err);
