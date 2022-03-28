@@ -21,11 +21,10 @@ job = new CronJob(
 
       sgMail.setApiKey(process.env.SENDGRID_API_KEY);
       const msg = {
-        to: "test@example.com", // Change to your recipient
-        from: "test@example.com", // Change to your verified sender
-        subject: "Sending with SendGrid is Fun",
-        text: "and easy to do anywhere, even with Node.js",
-        html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+        to: "adminmail@gmail.com", // Change to your recipient
+        from: "kentinhogbonouto1@gmail.com", // Change to your verified sender
+        subject: "node packages updated repport",
+        html: "<strong>Dear admin, kindly open the attachment \nfile bellow to check whole the packages out to date whitin your api. you will receive this mail every 72 hours</strong>",
       };
 
        sgMail.send(msg);
@@ -39,18 +38,3 @@ job = new CronJob(
   true,
   "America/Los_Angeles"
 );
-
-// child.stdout.on("data", (data) => {
-//   console.log("Stdout:\n", Buffer.from(data).toString());
-// });
-// child.stderr.on("data", (data) => {
-//   console.error(Buffer.from(data).toString());
-// });
-// child.on("error", (error) => {
-//   console.error("Error:\n", error);
-// });
-// child.on("exit", (code, signal) => {
-//   if (code) console.error("Process exit with code:", code);
-//   else if (signal) console.error("Process killed with signal:", signal);
-//   else console.log("Done successfull ✅");
-// });
