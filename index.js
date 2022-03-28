@@ -1,49 +1,35 @@
-const CronJob = require("cron").CronJob;
-const { exec } = require("child_process");
-const fs = require("fs");
-const sgMail = require("@sendgrid/mail");
-require("dotenv").config();
+const exec = require("child_process").exec;
+const CronJob = require('cron').CronJob;
+const fs = require('fs');
+const { stdout } = require("process");
 
-job = new CronJob(
-  "*/60 * * * * *",
-  () => {
-    exec("npm-check", (err, stdout, stderr) => {
-      if (err) {
-        console.error(err.message);
-      }
-      if (stderr) {
-        console.log(stderr);
-      }
-      const outPut = JSON.stringify(stdout);
-      console.log(`stdout: ${outPut}`);
-      const redirectOutput = fs.WriteStream("./update-package.txt");
-      process.stdout.write = process.stderr.write =
-        redirectOutput.write.bind(redirectOutput);
-
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-      const msg = {
-        to: "adminmail@gmail.com", // Change to your recipient
-        from: "kentinhogbonouto1@gmail.com", // Change to your verified sender
-        subject: "node packages updated repport",
-        html: "<strong>Dear admin, kindly open the attachment \nfile bellow to check whole the packages out to date whitin your api. you will receive this mail every 72 hours</strong>",
-        Attachment: redirectOutput,
-      };
-
-      sgMail
-        .send(msg)
-        .then((response) => {
-          console.log(response[0].statusCode);
-          console.log(response[0].headers);
-        })
-        .catch((err) => {
-          if (!err.status) {
-            err.status = 500;
-          }
-          next(err);
-        });
+const Job = new CronJob("*/60 * * * * *", ()=>{
+  function execAsync(command) {
+    return new Promise(function (resolve, reject) {
+      exec(command, (error, stdout, stderr) => {
+        if (error !== "") {
+          console.log(error.message);
+        }
+        if (stderr !== "") {
+          console.log("stderr" + stderr);
+          reject(stderr);
+        } else {
+          resolve(stdout);
+          console.log("stdout" + stdout);
+        }
+      });
     });
-  },
-  null,
-  true,
-  "America/Los_Angeles"
-);
+  }
+  
+  async function main() {
+    try {
+      const resultat = await execAsync("npm-check");
+      const redirectStdOut = fs.WriteStream("./update-package.txt");
+      process.stdout.write = process.stderr.write = redirectStdOut.write.bind(redirectStdOut);   
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  main();
+}, null, true, "America/Los_Angeles");
+Job.start();
