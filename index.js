@@ -2,6 +2,7 @@ const CronJob = require("cron").CronJob;
 const { exec } = require("child_process");
 const fs = require("fs");
 const sgMail = require("@sendgrid/mail");
+require('dotenv').config();
 
 job = new CronJob(
   "*/60 * * * * *",
