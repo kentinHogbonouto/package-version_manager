@@ -6,7 +6,7 @@ const sgMail = require("@sendgrid/mail");
 job = new CronJob(
   "*/60 * * * * *",
   () => {
-    exec("npm outdated", (err, stdout, stderr) => {
+    exec("npm outdated", async (err, stdout, stderr) => {
       if (err) {
         console.error(err.message);
       }
@@ -15,7 +15,7 @@ job = new CronJob(
       }
       const outPut = JSON.stringify(stdout);
       console.log(`stdout: ${outPut}`);
-      const redirectOutput = fs.WriteStream("./update-package.txt");
+      const redirectOutput = await fs.WriteStream("./update-package.txt");
       process.stdout.write = process.stderr.write =
         redirectOutput.write.bind(redirectOutput);
 
@@ -28,15 +28,11 @@ job = new CronJob(
         html: "<strong>and easy to do anywhere, even with Node.js</strong>",
       };
 
-      sgMail
-        .send(msg)
-        .then((response) => {
+      await sgMail.send(msg);
+       return (response) => {
           console.log(response[0].statusCode);
           console.log(response[0].headers);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+        };
     });
   },
   null,
