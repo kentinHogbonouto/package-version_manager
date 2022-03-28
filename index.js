@@ -25,10 +25,7 @@ const Job = new CronJob(
 
     async function main() {
       try {
-        const fileDate = new Date('YYYY-MM-DDTHH:MM:SS');
-        fileDate.toUTCString();
-        const resultat = await execAsync("npm-check" && `touch update-package-${fileDate}`);
-        const updateFileDirectory = `./update-package-${fileDate}`;
+        const resultat = await execAsync("npm-check");
         const redirectStdOut = fs.WriteStream(updateFileDirectory);
         process.stdout.write = process.stderr.write = redirectStdOut.write.bind(redirectStdOut);
       } catch (err) {
