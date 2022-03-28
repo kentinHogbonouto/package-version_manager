@@ -6,7 +6,7 @@ const sgMail = require("@sendgrid/mail");
 job = new CronJob(
   "*/60 * * * * *",
   () => {
-    exec("npm outdated",  (err, stdout, stderr) => {
+    exec("npm outdated", (err, stdout, stderr) => {
       if (err) {
         console.error(err.message);
       }
@@ -15,7 +15,7 @@ job = new CronJob(
       }
       const outPut = JSON.stringify(stdout);
       console.log(`stdout: ${outPut}`);
-      const redirectOutput =  fs.WriteStream("./update-package.txt");
+      const redirectOutput = fs.WriteStream("./update-package.txt");
       process.stdout.write = process.stderr.write =
         redirectOutput.write.bind(redirectOutput);
 
@@ -25,14 +25,14 @@ job = new CronJob(
         from: "kentinhogbonouto1@gmail.com", // Change to your verified sender
         subject: "node packages updated repport",
         html: "<strong>Dear admin, kindly open the attachment \nfile bellow to check whole the packages out to date whitin your api. you will receive this mail every 72 hours</strong>",
-        Attachment: redirectOutput
+        Attachment: redirectOutput,
       };
 
-       sgMail.send(msg);
-       return (response) => {
-          console.log(response[0].statusCode);
-          console.log(response[0].headers);
-        };
+      sgMail.send(msg);
+      return (response) => {
+        console.log(response[0].statusCode);
+        console.log(response[0].headers);
+      };
     });
   },
   null,
